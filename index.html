@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Progres Permohonan terkait HGB dan Hak Pakai Dispertaru DIY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 5px solid #ddd;
+        }
+        .step.completed {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .step.active {
+            border-left-color: #ffc107;
+            background-color: #fff3cd;
+        }
+        .step.pending {
+            border-left-color: #ddd;
+            background-color: #f8f9fa;
+        }
+        .date {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-style: italic;
+        }
+        .contact {
+            margin-top: 10px;
+        }
+        .contact a {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #25d366;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .contact a:hover {
+            background-color: #128c7e;
+        }
+        .confirmation {
+            margin-top: 10px;
+        }
+        .confirmation button {
+            background-color: #007bff;  /* Ubah ke biru */
+        }
+        .confirmation button:hover {
+            background-color: #0056b3;  /* Hover biru gelap */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cek Progres Permohonan terkait HGB dan Hak Pakai Dispertaru DIY</h1>
+        <p>Masukkan nomor ID berkas untuk melihat progres.</p>
+        <input type="text" id="idInput" placeholder="Masukkan ID Berkas (contoh: ABC123)">
+        <button onclick="searchProgress()">Cari</button>
+        <div id="result"></div>
+    </div>
+    <script>
+        function searchProgress() {
+            const id = document.getElementById('idInput').value;
+            const resultDiv = document.getElementById('result');
+            
+            // Data dummy: ID dengan step progres dan tanggal (array, null jika belum) - Tambah ABC111
+            const progresses = {
+                'ABC123': {
+                    step: 1,
+                    dates: ['01 Oktober 2023', null, null, null, null, null]  // Hanya langkah 1 punya tanggal
+                },
+                'DEF456': {
+                    step: 2,
+                    dates: ['01 Oktober 2023', '05 Oktober 2023', null, null, null, null]
+                },
+                'GHI789': {
+                    step: 3,
+                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', null, null, null]
+                },
+                'JKL012': {
+                    step: 4,
+                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', null, null]
+                },
+                'MNO345': {
+                    step: 5,
+                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', '20 Oktober 2023', null]
+                },
+                'XYZ123': {  // ID baru dengan status "Surat Tanggapan siap diambil" (step 5)
+                    step: 5,
+                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', '20 Oktober 2023', null]
+                },
+                'ABC111': {  // ID baru dengan status "Surat Tanggapan siap diambil" (step 5)
+                    step: 5,
+                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', '20 Oktober 2023', null]
+                }
+            };
+            
+            const steps = [
+                'Permohonan diterima',
+                'Dijadwalkan rapat',
+                'Sudah dirapatkan',
+                'Surat Tanggapan dalam proses',
+                'Surat Tanggapan siap diambil',
+                'Surat Tanggapan diterima'  // Langkah baru
+            ];
+            
+            if (progresses[id]) {
+                let progress = progresses[id];
+                
+                // Cek Local Storage untuk konfirmasi (step 6) dan nama penerima
+                const storedStep = localStorage.getItem('progress_' + id);
+                const storedReceiver = localStorage.getItem('receiver_' + id);
+                if (storedStep && parseInt(storedStep) > progress.step) {
+                    progress.step = parseInt(storedStep);
+                    progress.dates[5] = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });  // Tanggal hari ini
+                }
+                
+                let html = '<h3>Progres Berkas ID: ' + id + '</h3>';
+                steps.forEach((step, index) => {
+                    const stepNum = index + 1;
+                    let className = 'step ';
+                    let dateHtml = '';
+                    if (stepNum < progress.step) {
+                        className += 'completed';
+                        dateHtml = '<div class="date">Tanggal: ' + progress.dates[index] + '</div>';
+                    } else if (stepNum === progress.step) {
+                        className += 'active';
+                        dateHtml = '<div class="date">Tanggal: ' + progress.dates[index] + '</div>';
+                        if (stepNum === 6 && storedReceiver) {
+                            dateHtml += '<div class="date">Penerima: ' + storedReceiver + '</div>';
+                        }
+                    } else {
+                        className += 'pending';
+                    }
+                    html += '<div class="' + className + '">' + step + dateHtml + '</div>';
+                });
+                
+                // Tambahkan keterangan, menu WhatsApp, dan konfirmasi jika status mencapai langkah 5 dan belum dikonfirmasi
+                if (progress.step === 5) {
+                    html += '<div class="note">Hubungi kami sebelum mengambil surat tanggapan.</div>';
+                    html += '<div class="contact"><a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20mengambil%20surat%20tanggapan%20untuk%20ID%20' + id + '" target="_blank">Hubungi via WhatsApp</a></div>';
+                    html += '<div class="confirmation"><button onclick="confirmReceipt(\'' + id + '\')">Konfirmasi surat tanggapan diterima</button></div>';  // Ubah teks tombol
+                }
+                
+                resultDiv.innerHTML = html;
+            } else {
+                resultDiv.innerHTML = '<p style="color: red;">ID tidak ditemukan. Periksa kembali nomor ID.</p>';
+            }
+        }
+        
+        // Fungsi untuk konfirmasi penerimaan dengan popup input nama
+        function confirmReceipt(id) {
+            const receiverName = prompt('Masukkan nama penerima:');
+            if (receiverName && receiverName.trim() !== '') {
+                // Simpan konfirmasi dan nama penerima di Local Storage
+                localStorage.setItem('progress_' + id, '6');
+                localStorage.setItem('receiver_' + id, receiverName.trim());
+                alert('Konfirmasi kami terima. Terima kasih.');
+                // Refresh tampilan
+                searchProgress();
+            } else {
+                alert('Nama penerima harus diisi.');
+            }
+        }
+    </script>
+</body>
+</html>
