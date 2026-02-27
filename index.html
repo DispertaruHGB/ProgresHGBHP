@@ -3,217 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Progres Permohonan terkait HGB dan Hak Pakai Dispertaru DIY</title>
+    <title>Pelacakan Berkas HGB & Hak Pakai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 500px;
-        }
-        h1 {
-            color: #333;
-        }
-        input {
-            padding: 10px;
-            width: 80%;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #result {
-            margin-top: 20px;
-            text-align: left;
-        }
-        .step {
-            margin: 10px 0;
-            padding: 10px;
-            border-left: 5px solid #ddd;
-        }
-        .step.completed {
-            border-left-color: #28a745;
-            background-color: #d4edda;
-        }
-        .step.active {
-            border-left-color: #ffc107;
-            background-color: #fff3cd;
-        }
-        .step.pending {
-            border-left-color: #ddd;
-            background-color: #f8f9fa;
-        }
-        .date {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .note {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            font-style: italic;
-        }
-        .contact {
-            margin-top: 10px;
-        }
-        .contact a {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #25d366;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .contact a:hover {
-            background-color: #128c7e;
-        }
-        .confirmation {
-            margin-top: 10px;
-        }
-        .confirmation button {
-            background-color: #007bff;  /* Ubah ke biru */
-        }
-        .confirmation button:hover {
-            background-color: #0056b3;  /* Hover biru gelap */
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; }
+        .header { text-align: center; color: white; padding: 40px 20px 30px; }
+        .header-icon { width: 80px; height: 80px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 36px; }
+        .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .card { background: white; border-radius: 24px; box-shadow: 0 25px 80px rgba(0,0,0,0.4); overflow: hidden; margin-bottom: 20px; }
+        .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; text-align: center; }
+        .card-header h2 { font-size: 18px; font-weight: 600; }
+        .card-body { padding: 30px; }
+        .search-wrapper { margin-bottom: 20px; }
+        .search-input { width: 100%; padding: 18px 20px; border: 2px solid #e8e8e8; border-radius: 16px; font-size: 20px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; text-align: center; transition: all 0.3s ease; }
+        .search-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15); }
+        .btn-search { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        .btn-search:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
+        .info-box { background: linear-gradient(135deg, #f5f7ff 0%, #e8ecff 100%); color: #5a6a8a; padding: 15px 18px; border-radius: 12px; font-size: 13px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px; border: 1px solid #d8dff5; }
+        #trackingResult { display: none; }
+        .reg-display { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 16px; text-align: center; margin-bottom: 25px; }
+        .reg-display .label { font-size: 12px; opacity: 0.9; margin-bottom: 8px; }
+        .reg-display .number { font-size: 36px; font-weight: 700; letter-spacing: 6px; font-family: 'Courier New', monospace; }
+        .details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 30px; }
+        .detail-card { background: #fafbfc; padding: 16px; border-radius: 12px; border: 1px solid #eee; }
+        .detail-card.full { grid-column: 1 / -1; }
+        .detail-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .detail-value { font-size: 14px; font-weight: 600; color: #333; }
+        .warning-box { background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 25px; text-align: center; }
+        .warning-box .icon { font-size: 32px; margin-bottom: 10px; }
+        .warning-box .text { font-size: 14px; font-weight: 600; color: #856404; margin-bottom: 15px; }
+        .btn-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; }
+        .timeline { position: relative; padding-left: 40px; }
+        .timeline::before { content: ''; position: absolute; left: 14px; top: 5px; bottom: 5px; width: 3px; background: #e8e8e8; border-radius: 3px; }
+        .timeline-item { position: relative; padding-bottom: 25px; }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot { position: absolute; left: -40px; top: 0; width: 30px; height: 30px; border-radius: 50%; background: #e8e8e8; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #999; z-index: 1; }
+        .timeline-dot.completed { background: linear-gradient(135deg, #00c853 0%, #00e676 100%); color: white; }
+        .timeline-dot.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .timeline-content { background: #fafbfc; padding: 18px; border-radius: 14px; border: 1px solid #eee; }
+        .timeline-content.completed { background: linear-gradient(135deg, #f0fff4 0%, #e8f8f0 100%); border-color: #c6f6d5; }
+        .timeline-content.active { background: linear-gradient(135deg, #f5f7ff 0%, #e8ecff 100%); border-color: #c3dafe; }
+        .timeline-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .timeline-title { font-size: 15px; font-weight: 600; color: #333; }
+        .timeline-status { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .timeline-status.completed { background: #c6f6d5; color: #22543d; }
+        .timeline-status.active { background: #c3dafe; color: #2c5282; }
+        .timeline-status.pending { background: #feebc8; color: #744210; }
+        .timeline-desc { font-size: 13px; color: #666; margin-bottom: 8px; }
+        .timeline-time { font-size: 12px; color: #999; }
+        .error-state { text-align: center; padding: 40px 20px; background: #fff5f5; border-radius: 16px; border: 1px solid #fed7d7; }
+        .error-icon { font-size: 48px; margin-bottom: 15px; }
+        .error-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .error-text { font-size: 14px; color: #666; }
+        .footer { text-align: center; color: white; padding: 25px; font-size: 13px; opacity: 0.7; }
+        @media (max-width: 600px) { .header h1 { font-size: 22px; } .card-body { padding: 20px; } .search-input { font-size: 18px; letter-spacing: 2px; } .reg-display .number { font-size: 28px; letter-spacing: 3px; } .details-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Cek Progres Permohonan terkait HGB dan Hak Pakai Dispertaru DIY</h1>
-        <p>Masukkan nomor ID berkas untuk melihat progres.</p>
-        <input type="text" id="idInput" placeholder="Masukkan ID Berkas (contoh: ABC123)">
-        <button onclick="searchProgress()">Cari</button>
-        <div id="result"></div>
+        <div class="header">
+            <div class="header-icon">📝</div>
+            <h1>Pelacakan Berkas Pertanahan</h1>
+            <p>Cek status permohonan terkait HGB & Hak Pakai</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>🔍 Lacak Berkas Permohonan</h2>
+            </div>
+            <div class="card-body">
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" id="noReg" placeholder="A-BC123" maxlength="7">
+                    <input type="button" class="btn-search" value="🔍 Lacak Berkas">
+                </div>
+
+                <div class="info-box">
+                    <span>ℹ️</span>
+                    <span>Masukkan nomor registrasi yang Anda terima saat mengajukan permohonan</span>
+                </div>
+
+                <div id="trackingResult"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Dinas Pertanahan dan Tata Ruang DIY | Sistem Pelacakan Berkas Online</p>
+        </div>
     </div>
+	
     <script>
-        function searchProgress() {
-            const id = document.getElementById('idInput').value;
-            const resultDiv = document.getElementById('result');
-            
-            // Data dummy: ID dengan step progres dan tanggal (array, null jika belum) - Tambah ABC111
-            const progresses = {
-                'ABC123': {
-                    step: 1,
-                    dates: ['01 Oktober 2023', null, null, null, null, null]  // Hanya langkah 1 punya tanggal
-                },
-                'DEF456': {
-                    step: 2,
-                    dates: ['01 Oktober 2023', '05 Oktober 2023', null, null, null, null]
-                },
-                'GHI789': {
-                    step: 3,
-                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', null, null, null]
-                },
-                'JKL012': {
-                    step: 4,
-                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', null, null]
-                },
-                'MNO345': {
-                    step: 5,
-                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', '20 Oktober 2023', null]
-                },
-                'XYZ123': {  // ID baru dengan status "Surat Tanggapan siap diambil" (step 5)
-                    step: 5,
-                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', '20 Oktober 2023', null]
-                },
-                'ABC111': {  // ID baru dengan status "Surat Tanggapan siap diambil" (step 5)
-                    step: 5,
-                    dates: ['01 Oktober 2023', '05 Oktober 2023', '10 Oktober 2023', '15 Oktober 2023', '20 Oktober 2023', null]
-                }
-            };
-            
-            const steps = [
-                'Permohonan diterima',
-                'Dijadwalkan rapat',
-                'Sudah dirapatkan',
-                'Surat Tanggapan dalam proses',
-                'Surat Tanggapan siap diambil',
-                'Surat Tanggapan diterima'  // Langkah baru
-            ];
-            
-            if (progresses[id]) {
-                let progress = progresses[id];
-                
-                // Cek Local Storage untuk konfirmasi (step 6) dan nama penerima
-                const storedStep = localStorage.getItem('progress_' + id);
-                const storedReceiver = localStorage.getItem('receiver_' + id);
-                if (storedStep && parseInt(storedStep) > progress.step) {
-                    progress.step = parseInt(storedStep);
-                    progress.dates[5] = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });  // Tanggal hari ini
-                }
-                
-                let html = '<h3>Progres Berkas ID: ' + id + '</h3>';
-                steps.forEach((step, index) => {
-                    const stepNum = index + 1;
-                    let className = 'step ';
-                    let dateHtml = '';
-                    if (stepNum < progress.step) {
-                        className += 'completed';
-                        dateHtml = '<div class="date">Tanggal: ' + progress.dates[index] + '</div>';
-                    } else if (stepNum === progress.step) {
-                        className += 'active';
-                        dateHtml = '<div class="date">Tanggal: ' + progress.dates[index] + '</div>';
-                        if (stepNum === 6 && storedReceiver) {
-                            dateHtml += '<div class="date">Penerima: ' + storedReceiver + '</div>';
-                        }
-                    } else {
-                        className += 'pending';
-                    }
-                    html += '<div class="' + className + '">' + step + dateHtml + '</div>';
-                });
-                
-                // Tambahkan keterangan, menu WhatsApp, dan konfirmasi jika status mencapai langkah 5 dan belum dikonfirmasi
-                if (progress.step === 5) {
-                    html += '<div class="note">Hubungi kami sebelum mengambil surat tanggapan.</div>';
-                    html += '<div class="contact"><a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20ingin%20mengambil%20surat%20tanggapan%20untuk%20ID%20' + id + '" target="_blank">Hubungi via WhatsApp</a></div>';
-                    html += '<div class="confirmation"><button onclick="confirmReceipt(\'' + id + '\')">Konfirmasi surat tanggapan diterima</button></div>';  // Ubah teks tombol
-                }
-                
-                resultDiv.innerHTML = html;
-            } else {
-                resultDiv.innerHTML = '<p style="color: red;">ID tidak ditemukan. Periksa kembali nomor ID.</p>';
-            }
+    var database = {
+        'B-HF836': {
+            nama: 'Siti Asiyah/Ir. Goenadi Malang Joedo', jenis: 'Perpanjangan/Pembaruan Hak', nomor: 'HGB No. 00007/Tamantirto',
+            steps: [
+                {status:'completed', title:'Permohonan Diterima', time:'24 Februari 2026'},
+                {status:'pending', title:'Proses Verifikasi', time:'-'},
+                {status:'pending', title:'Surat Tanggapan Dalam Proses', time:'-'},
+                {status:'pending', title:'Surat Tanggapan Siap Diambil', time:'-'}
+            ]
+        },
+        'A-HP229': {
+            nama: 'Ir. Sagoro Wedy, MM', jenis: 'Perpanjangan/Pembaruan Hak', nomor: 'HGB No. 00257/Kotabaru',
+            steps: [
+                {status:'completed', title:'Permohonan Diterima', time:'24 Februari 2026'},
+                {status:'pending', title:'Proses Verifikasi', time:'-'},
+                {status:'pending', title:'Surat Tanggapan Dalam Proses', time:'-'},
+                {status:'pending', title:'Surat Tanggapan Siap Diambil', time:'-'}
+            ]
+        },
+        'A-SH645': {
+            nama: 'Ir. Sagoro Wedy, MM', jenis: 'Perpanjangan/Pembaruan Hak', nomor: 'HGB No. 00258/Kotabaru',
+            steps: [
+                {status:'completed', title:'Permohonan Diterima', time:'24 Februari 2026'},
+                {status:'pending', title:'Proses Verifikasi', time:'-'},
+                {status:'pending', title:'Surat Tanggapan Dalam Proses', time:'-'},
+                {status:'pending', title:'Surat Tanggapan Siap Diambil', time:'-'}
+            ]
+        },
+        'GHI321': {
+            nama: 'PT Sentosa Abadi', jenis: 'Perpanjangan/Pembaruan Hak', nomor: 'XXX',
+            steps: [
+                {status:'completed', title:'Permohonan Diterima', time:'18 Jan 2024'},
+                {status:'completed', title:'Proses Verifikasi', time:'19 Jan 2024'},
+                {status:'completed', title:'Surat Tanggapan Dalam Proses', time:'20 Jan 2024'},
+                {status:'completed', title:'Surat Tanggapan Siap Diambil', time:'21 Jan 2024'}
+            ]
+        },
+	'XYZ987': {
+            nama: 'PT Sentosa Abadi', jenis: 'Identifikasi Asal-Usul', nomor: 'Hak Pakai No. XXX',
+            steps: [
+                {status:'completed', title:'Permohonan Diterima', time:'18 Jan 2024'},
+                {status:'completed', title:'Proses Verifikasi', time:'19 Jan 2024'},
+                {status:'completed', title:'Surat Tanggapan Dalam Proses', time:'20 Jan 2024'},
+                {status:'completed', title:'Surat Tanggapan Siap Diambil', time:'21 Jan 2024'}
+            ]
+        }
+    };
+
+    var nomorWA = "6288296279570";
+
+    var btn = document.getElementsByClassName('btn-search')[0];
+    btn.onclick = function() {
+        var noReg = document.getElementById('noReg').value.trim().toUpperCase();
+        var hasil = document.getElementById('trackingResult');
+        
+        if (noReg === '') {
+            alert('Masukkan nomor registrasi!');
+            return;
         }
         
-        // Fungsi untuk konfirmasi penerimaan dengan popup input nama
-        function confirmReceipt(id) {
-            const receiverName = prompt('Masukkan nama penerima:');
-            if (receiverName && receiverName.trim() !== '') {
-                // Simpan konfirmasi dan nama penerima di Local Storage
-                localStorage.setItem('progress_' + id, '6');
-                localStorage.setItem('receiver_' + id, receiverName.trim());
-                alert('Konfirmasi kami terima. Terima kasih.');
-                // Refresh tampilan
-                searchProgress();
-            } else {
-                alert('Nama penerima harus diisi.');
-            }
+        var d = database[noReg];
+        
+        if (!d) {
+            hasil.style.display = 'block';
+            hasil.innerHTML = '<div class="error-state"><div class="error-icon">❌</div><div class="error-title">Data Tidak Ditemukan</div><div class="error-text">Nomor registrasi tidak ditemukan</div></div>';
+            return;
         }
+        
+        var tahap4 = d.steps[3];
+        var sudahSiap = (tahap4.status === 'active' || tahap4.status === 'completed');
+        
+        var html = '<div class="reg-display"><div class="label">Nomor Registrasi</div><div class="number">' + noReg + '</div></div>';
+        
+                
+        html += '<div class="details-grid"><div class="detail-card"><div class="detail-label">Nama Pemohon</div><div class="detail-value">' + d.nama + '</div></div><div class="detail-card"><div class="detail-label">Jenis Permohonan</div><div class="detail-value">' + d.jenis + '</div></div><div class="detail-card full"><div class="detail-label">Nomor Hak</div><div class="detail-value">' + d.nomor + '</div></div></div>';
+        
+        html += '<div class="timeline">';
+        for (var i = 0; i < d.steps.length; i++) {
+            var s = d.steps[i];
+            var badge = s.status === 'completed' ? 'Selesai' : (s.status === 'active' ? 'Proses' : 'Menunggu');
+            var icon = s.status === 'completed' ? '✓' : (i+1);
+            html += '<div class="timeline-item"><div class="timeline-dot ' + s.status + '">' + icon + '</div><div class="timeline-content ' + s.status + '"><div class="timeline-header"><span class="timeline-title">' + s.title + '</span><span class="timeline-status ' + s.status + '">' + badge + '</span></div><div class="timeline-desc">' + '</div><div class="timeline-time">' + s.time + '</div></div></div>';
+        }
+	if (sudahSiap) {
+            html += '<div class="warning-box"><div class="icon">📞</div><div class="text">Hubungi kami sebelum mengambil surat tanggapan</div><a href="https://wa.me/' + nomorWA + '?text=Halo%20saya%20ingin%20mengambil%20surat%20tanggapan%20HGB/Hak%20Pakai%20dengan%20nomor%20registrasi%20' + noReg + '" class="btn-whatsapp" target="_blank">💬 Hubungi via WhatsApp</a></div>';
+        }
+        html += '</div>';
+        
+        hasil.innerHTML = html;
+        hasil.style.display = 'block';
+    };
+
     </script>
 </body>
 </html>
